@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Multiband Viewer</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <header id="toolbar">
+    <label class="btn primary" title="Open images (JPEG, TIFF 8/16-bit, PNG)">
+      Open images<input id="file" type="file" multiple accept=".tif,.tiff,.jpg,.jpeg,.png,.webp,image/*" hidden />
+    </label>
+    <select id="layout" title="Layout">
+      <option value="auto">Auto layout</option>
+      <option value="1x1">1 × 1</option>
+      <option value="2x1">2 side by side</option>
+      <option value="1x2">2 stacked</option>
+      <option value="3x1">3 in a row</option>
+      <option value="2x2">2 × 2</option>
+      <option value="3x2">3 × 2</option>
+      <option value="2x3">2 × 3</option>
+      <option value="4x2">4 × 2</option>
+      <option value="3x3">3 × 3</option>
+    </select>
+    <span class="sep"></span>
+    <div id="tools" class="group" role="toolbar">
+      <button data-tool="pan" class="on" title="Select / pan (V)">✥ Select</button>
+      <button data-tool="marker" title="Numbered point (N)">① Point</button>
+      <button data-tool="text" title="Text note (T)">T Text</button>
+      <button data-tool="arrow" title="Arrow (A)">↗ Arrow</button>
+      <button data-tool="rect" title="Rectangle (R)">▭ Box</button>
+      <button data-tool="ellipse" title="Ellipse (E)">◯ Circle</button>
+      <button data-tool="pen" title="Freehand (P)">✎ Pen</button>
+    </div>
+    <input id="color" type="color" value="#ff3b30" title="Markup color" />
+    <select id="width" title="Line width">
+      <option value="2">thin</option><option value="3" selected>medium</option><option value="6">thick</option>
+    </select>
+    <button id="undo" title="Undo (Ctrl/Cmd+Z)">↶</button>
+    <button id="delete" title="Delete selected (Del)">🗑</button>
+    <span class="sep"></span>
+    <button id="fit" title="Fit (0)">Fit</button>
+    <button id="one" title="Actual pixels of reference (1)">1:1</button>
+    <span id="zoomlbl" class="muted"></span>
+    <span class="sep"></span>
+    <button id="rgbBtn" title="Show RGB values under the cursor in every panel (I)">RGB</button>
+    <select id="compare" autocomplete="off" title="Check alignment: overlay the reference on every panel (C cycles)">
+      <option value="">Compare: off</option><option value="swipe">Swipe with ref</option>
+      <option value="flicker">Flicker with ref</option><option value="diff">Difference to ref</option>
+    </select>
+    <span class="grow"></span>
+    <button id="export" title="Export current view as PNG">Export PNG</button>
+    <button id="save" title="Save project (markup, alignment, layout)">Save</button>
+    <label class="btn" title="Load project">Load<input id="load" type="file" accept=".json,.mbv.json" hidden /></label>
+    <button id="present" title="Presentation mode (F)">⛶</button>
+    <button id="theme" title="Toggle dark / light">◐</button>
+  </header>
+
+  <dialog id="privacy">
+    <h3>🔒 Your images never leave this computer</h3>
+    <p>Multiband Viewer runs entirely on your own computer, inside this browser window.</p>
+    <ul>
+      <li>Images are <b>never uploaded</b> to any server. There is no server: decoding, alignment, markup and export all run locally.</li>
+      <li>Imported images are cached in this browser's private storage on <b>your disk</b>, so they reopen quickly. Clear it any time under <b>Local cache</b>.</li>
+      <li class="webOnly">The page has a security policy that blocks sending data anywhere, so the browser itself would refuse an upload.</li>
+      <li>Project files and PNG exports are saved only where you choose.</li>
+    </ul>
+    <form method="dialog"><button class="primary">OK</button></form>
+  </dialog>
+
+  <main>
+    <aside id="side">
+      <section id="navBox">
+        <h3>Navigator</h3>
+        <canvas id="nav" hidden></canvas>
+        <div class="navZoom" hidden>
+          <button id="navOut" title="Zoom out">−</button>
+          <input id="navZoom" type="range" min="0" max="1000" value="0" title="Zoom" />
+          <button id="navIn" title="Zoom in">+</button>
+        </div>
+      </section>
+      <section>
+        <h3>Images <span class="row" style="margin:0"><button id="alignAll" class="primary" title="Quick alignment of all images to the reference">Auto-align all</button><button id="fullAll" title="Slow, high-precision alignment for difficult bands (IR transmission, low detail)">Full</button><button id="revertAll" title="Undo the last alignment of every image">↶ Revert</button></span></h3>
+        <ul id="images"></ul>
+        <p id="dropHint" class="muted">Drop images here or click “Open images”.<br>🔒 Files are processed on this computer and never uploaded.</p>
+        <div id="manualBox" hidden>
+          <p class="muted" id="manualMsg"></p>
+          <div class="row"><button id="manualApply">Apply</button><button id="manualCancel">Cancel</button></div>
+        </div>
+        <div class="row" id="closeAllRow" hidden><button id="closeAll" title="Close all images (they stay in the local cache)">Close all</button></div>
+      </section>
+      <section>
+        <h3>Points &amp; notes <label class="small"><input id="showNotes" type="checkbox" /> show on image</label></h3>
+        <ol id="notes"></ol>
+        <div class="row"><button id="renumber" title="Renumber points 1, 2, 3 …">Renumber</button></div>
+      </section>
+      <section>
+        <h3>Local cache</h3>
+        <ul id="library"></ul>
+        <div class="row"><span id="libSize" class="muted"></span><button id="libClear">Clear unused</button></div>
+        <p class="small"><a href="#" id="privacyBtn">🔒 Privacy: nothing is ever uploaded</a></p>
+      </section>
+    </aside>
+    <div id="grid"></div>
+  </main>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

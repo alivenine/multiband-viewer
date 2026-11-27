@@ -1,0 +1,22 @@
+{
+  "name": "multiband-viewer",
+  "private": true,
+  "license": "MIT",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name multiband-viewer --branch main --commit-dirty=true"
+  },
+  "dependencies": {
+    "geotiff": "^2.1.3"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "vite": "^6.0.0",
+    "wrangler": "^4.158.0"
+  }
+}
