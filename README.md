@@ -110,8 +110,7 @@ The app isn't code-signed, so Windows SmartScreen may say "Windows protected you
 **More info**, then **Run anyway**.
 
 ## Web deployment
-Live at **https://multiview.alivenine.fyi**, served by Cloudflare Pages (project `multiband-viewer`,
-also at https://multiband-viewer.pages.dev). To publish an update:
+Live at **https://multiview.alivenine.fyi**, served by Cloudflare Pages. To publish an update:
 ```bash
 npm run deploy
 ```
