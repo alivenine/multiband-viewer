@@ -20,6 +20,15 @@ still static files, so hosting it doesn't send images anywhere. Production build
 Content-Security-Policy that stops the page from connecting anywhere except its own files, so the
 browser itself would block an upload. The app shows this in a **🔒 Privacy** note in the sidebar.
 
+## Download
+- **Web:** open https://multiview.alivenine.fyi, nothing to install. Or host your own copy for free (see
+  [Web deployment](#web-deployment)).
+- **macOS and Windows:** installers are on the [Releases](https://github.com/alivenine/multiband-viewer/releases) page
+  (`.dmg` for Mac, Intel and Apple silicon; `.exe` or `.msi` for Windows).
+- The apps aren't code-signed. On a Mac, the first open is blocked: go to **System Settings → Privacy & Security**,
+  click **Open Anyway**, then open the app again. On Windows, SmartScreen may say "Windows protected your PC": click
+  **More info**, then **Run anyway**.
+
 ## Supported files
 - TIFF 8 / 16 / 32-bit float (with its own LZW decoder: the `geotiff` library's version hangs on standard LZW files that fill the full code table), gray or RGB, uncompressed / LZW / Deflate / PackBits / JPEG, striped or tiled, BigTIFF.
   16-bit and float data get an automatic stretch from the 0.05–99.95 percentiles.
@@ -115,6 +124,21 @@ Live at **https://multiview.alivenine.fyi**, served by Cloudflare Pages. To publ
 npm run deploy
 ```
 `public/_headers` sends the same no-upload Content-Security-Policy as an HTTP header.
+
+### Host your own copy for free
+The web app is only static files, and all image processing happens in the visitor's browser, so it runs on
+Cloudflare's **free plan** (Pages, or Workers static assets). Static requests and bandwidth are free and unlimited
+there. You pay nothing for storage either, because images are never uploaded.
+
+Either connect your fork in the Cloudflare dashboard (**Workers & Pages → Create → Pages → Connect to Git**,
+build command `npm run build`, output directory `dist`), or deploy from your computer:
+```bash
+npx wrangler login
+npx wrangler pages project create my-multiband-viewer
+npm run build && npx wrangler pages deploy dist --project-name my-multiband-viewer
+```
+Any other static host (GitHub Pages, Netlify, your own web server) works too. Serve `dist/` with the
+headers from `public/_headers` to keep the no-upload policy.
 
 ## Develop
 ```bash
